@@ -158,14 +158,12 @@ void test_resize() {
 
 
 int main() {
-    // 只测试第一题
+
     std::cout << "开始测试函数 << my_strlen >> ..." << std::endl;
     test_strlen();
     
-    // 只测试第二题
     std::cout << "开始测试函数 << my_strcat >> ..." << std::endl;
     test_strcat();
-
 
     std::cout << "开始测试函数 << my_strstr >> ..." << std::endl;
     test_strstr();
@@ -173,13 +171,12 @@ int main() {
     std::cout << "开始测试函数 << rgb2gray >> ..." << std::endl;
     test_rgb2gray();
 
-     // 后面的全注释掉了，防止闪退
-    /*
     std::cout << "开始测试函数 << resize >> ..." << std::endl;
     test_resize();
+
     std::cout << "开始测试函数 << hist_eq >> ..." << std::endl;
     test_hist_eq();
-    */
+   
     std::cin.get();
 
     return 0;

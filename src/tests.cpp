@@ -70,12 +70,96 @@ void rgb2gray(float *in, float *out, int h, int w) {
     
 }
 
+
+
 // 练习5，实现图像处理算法 resize：缩小或放大图像
 void resize(float *in, float *out, int h, int w, int c, float scale) {
-    (void)in; (void)out; (void)h; (void)w; (void)c; (void)scale;
+    int new_h = h * scale, new_w = w * scale;
+    
+    
+    for (int y = 0; y < new_h; y++) {
+        for (int x = 0; x < new_w; x++) {
+            
+            float x0 = x / scale;
+            float y0 = y / scale;
+            
+        
+            int x1 = (int)x0;
+            int y1 = (int)y0;
+            int x2 = x1 + 1;
+            int y2 = y1 + 1;
+            
+            
+            if (x2 >= w) x2 = w - 1;
+            if (y2 >= h) y2 = h - 1;
+            
+        
+            float dx = x0 - x1;
+            float dy = y0 - y1;
+            
+
+            for (int k = 0; k < c; k++) {
+                
+                float p1 = in[(y1 * w + x1) * c + k]; // 左上
+                float p2 = in[(y1 * w + x2) * c + k]; // 右上
+                float p3 = in[(y2 * w + x1) * c + k]; // 左下
+                float p4 = in[(y2 * w + x2) * c + k]; // 右下
+                
+        
+                float result = p1 * (1 - dx) * (1 - dy) +
+                               p2 * dx * (1 - dy) +
+                               p3 * (1 - dx) * dy +
+                               p4 * dx * dy;
+                
+                out[(y * new_w + x) * c + k] = result;
+            }
+        }
+    }
 }
+
+
+
+
 
 // 练习6，实现图像处理算法：直方图均衡化
 void hist_eq(float *in, int h, int w) {
-    (void)in; (void)h; (void)w;
+    int total = h * w;
+    int hist[256] = {0};
+    int cdf[256] = {0};
+    int map[256] = {0};
+
+    
+    for (int i = 0; i < total; i++) {
+        int gray = (int)in[i];
+        if (gray < 0) gray = 0;
+        if (gray > 255) gray = 255;
+        hist[gray]++;
+    }
+
+
+    int cdf_min = 0;
+    for (int i = 0; i < 256; i++) {
+        if (i == 0) {
+            cdf[i] = hist[i];
+        } else {
+            cdf[i] = cdf[i - 1] + hist[i];
+        }
+        if (cdf_min == 0 && hist[i] != 0) {
+            cdf_min = cdf[i];
+        }
+    }
+
+    
+    for (int i = 0; i < 256; i++) {
+    
+        map[i] = (int)((cdf[i] - cdf_min) * 255.0 / (total - cdf_min) + 0.5);
+    }
+
+    
+    for (int i = 0; i < total; i++) {
+        int gray = (int)in[i];
+        if (gray < 0) gray = 0;
+        if (gray > 255) gray = 255;
+        in[i] = (float)map[gray];
+    }
 }
